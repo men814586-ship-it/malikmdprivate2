@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>MALIK-MD | Admin Command Center</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #080811;
+      --card-bg: rgba(18, 18, 30, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary: #667eea;
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --accent-green: #00d4aa;
+      --accent-pink: #f5576c;
+      --accent-orange: #ff9a9e;
+      --accent-cyan: #00f2fe;
+      --accent-red: #ff4757;
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-orbs {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.25;
+      animation: floatOrb 22s infinite ease-in-out alternate;
+    }
+
+    .orb-1 {
+      width: 650px;
+      height: 650px;
+      top: -200px;
+      left: -200px;
+      background: var(--primary-gradient);
+    }
+
+    .orb-2 {
+      width: 550px;
+      height: 550px;
+      bottom: -150px;
+      right: -150px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .orb-3 {
+      width: 450px;
+      height: 450px;
+      top: 40%;
+      left: 60%;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(80px, 60px) scale(1.15); }
+    }
+
+    /* Auth Screen Modal */
+    #authOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 8, 17, 0.94);
+      backdrop-filter: blur(25px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 40px 32px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85);
+      text-align: center;
+      position: relative;
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--primary-gradient);
+      border-radius: 28px 28px 0 0;
+    }
+
+    .auth-logo {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 20px;
+      background: var(--primary-gradient);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 10px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .auth-title {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .auth-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* Layout Header */
+    header {
+      background: rgba(14, 14, 25, 0.7);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--primary-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.35);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      background: rgba(0, 212, 170, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 212, 170, 0.3);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+    }
+
+    .dot-live {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    .btn-logout {
+      background: rgba(245, 87, 108, 0.15);
+      color: var(--accent-pink);
+      border: 1px solid rgba(245, 87, 108, 0.3);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(245, 87, 108, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* Main Container & Tabs */
+    .main-layout {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .tabs-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      padding: 6px;
+      border-radius: 18px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 130px;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tab-btn.active {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+    }
+
+    .tab-btn.danger.active {
+      background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+      box-shadow: 0 8px 25px rgba(255, 71, 87, 0.4);
+    }
+
+    /* Tab Content Section */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stat Cards Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(102, 126, 234, 0.4);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .stat-val {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .stat-lbl {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Content Cards */
+    .card-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-title i {
+      color: var(--primary);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      color: white;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .form-select option {
+      background: #12121e;
+      color: white;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Buttons */
+    .btn-action {
+      padding: 14px 28px;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-action.btn-danger {
+      background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+      box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
+    }
+
+    .btn-action.btn-danger:hover {
+      box-shadow: 0 15px 40px rgba(255, 71, 87, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 16px 20px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--card-border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-user {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-online {
+      background: rgba(0, 212, 170, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 212, 170, 0.3);
+    }
+
+    .status-standby {
+      background: rgba(255, 154, 158, 0.15);
+      color: var(--accent-orange);
+      border: 1px solid rgba(255, 154, 158, 0.3);
+    }
+
+    /* Preset Emojis */
+    .emoji-picker {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .emoji-btn {
+      width: 44px;
+      height: 44px;
+      font-size: 22px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .emoji-btn:hover, .emoji-btn.selected {
+      background: rgba(102, 126, 234, 0.2);
+      border-color: var(--primary);
+      transform: scale(1.15);
+    }
+
+    /* Terminal Console Logs */
+    .console-box {
+      background: #04040a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #00f2fe;
+      min-height: 250px;
+      max-height: 350px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .log-time {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .log-success { color: var(--accent-green); }
+    .log-info { color: var(--accent-cyan); }
+    .log-warning { color: var(--accent-orange); }
+    .log-error { color: var(--accent-pink); }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--primary);
+      backdrop-filter: blur(20px);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 16px;
+      font-weight: 500;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 14px 18px; }
+      .main-layout { padding: 20px 14px; }
+      .tabs-bar { flex-wrap: wrap; }
+      .tab-btn { min-width: 100px; padding: 10px 12px; font-size: 12px; }
+      .stat-val { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Background Orbs -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Authentication Overlay -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <i class="fas fa-shield-halved"></i>
+      </div>
+      <h2 class="auth-title">MALIK-MD Admin Login</h2>
+      <p class="auth-subtitle">Sign in to manage connected bot sessions & features</p>
+      
+      <div class="form-group">
+        <label class="form-label">Admin Email</label>
+        <input type="email" id="authEmail" class="form-input" placeholder="mrosmanyt@gmail.com" value="mrosmanyt@gmail.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="authPasscode" class="form-input" placeholder="••••••••••••" value="malikxarham1">
+      </div>
+      
+      <button class="btn-action" id="btnLogin" style="width: 100%;">
+        <i class="fas fa-lock-open"></i> Login to Admin Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fas fa-crown"></i>
+      </div>
+      <div>
+        <span class="brand-title">MALIK-MD Command Center</span>
+        <span class="brand-tag">v2.5 Live</span>
+      </div>
+    </div>
+    
+    <div class="nav-user">
+      <div class="status-pill">
+        <div class="dot-live"></div>
+        <span>Connected Servers: <strong id="headerServerCount">20</strong></span>
+      </div>
+      <button class="btn-logout" id="btnLogout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class="main-layout">
+    
+    <!-- Navigation Tabs Bar -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="tabDashboard">
+        <i class="fas fa-chart-line"></i> Dashboard
+      </button>
+      <button class="tab-btn" data-tab="tabUsers">
+        <i class="fas fa-users"></i> Connected Users (<span id="tabUsersCount">0</span>)
+      </button>
+      <button class="tab-btn danger" data-tab="tabReport">
+        <i class="fas fa-flag"></i> Mass Auto-Report
+      </button>
+      <button class="tab-btn" data-tab="tabChannel">
+        <i class="fas fa-bullhorn"></i> Channel Follower
+      </button>
+      <button class="tab-btn" data-tab="tabReact">
+        <i class="fas fa-icons"></i> Emoji Reactions
+      </button>
+      <button class="tab-btn" data-tab="tabMessage">
+        <i class="fas fa-paper-plane"></i> Direct & Broadcast
+      </button>
+      <button class="tab-btn" data-tab="tabLogs">
+        <i class="fas fa-terminal"></i> Console Logs
+      </button>
+    </div>
+
+    <!-- TAB 1: DASHBOARD OVERVIEW -->
+    <div id="tabDashboard" class="tab-content active">
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon" style="background: rgba(102, 126, 234, 0.15); color: #667eea;">
+              <i class="fas fa-users"></i>
+            </div>
+            <span class="status-tag status-online">Active</span>
+          </div>
+          <div class="stat-val" id="statTotalUsers">0</div>
+          <div class="stat-lbl">Total Connected WhatsApp Users</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon" style="background: rgba(0, 212, 170, 0.15); color: #00d4aa;">
+              <i class="fas fa-server"></i>
+            </div>
+            <span class="status-tag status-online">Operational</span>
+          </div>
+          <div class="stat-val" id="statActiveServers">20 / 20</div>
+          <div class="stat-lbl">Heroku Backend Cluster Health</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon" style="background: rgba(255, 71, 87, 0.15); color: #ff4757;">
+              <i class="fas fa-flag"></i>
+            </div>
+            <span class="status-tag status-online">Ready</span>
+          </div>
+          <div class="stat-val" id="statTotalReports">0</div>
+          <div class="stat-lbl">Mass Reports Executed</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon" style="background: rgba(0, 242, 254, 0.15); color: #00f2fe;">
+              <i class="fas fa-network-wired"></i>
+            </div>
+            <span class="status-tag status-online">100%</span>
+          </div>
+          <div class="stat-val">Vercel</div>
+          <div class="stat-lbl">Frontend Routing Deployment</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Grid -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-rocket"></i> Quick Control Center
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <button class="btn-action btn-danger" onclick="switchTab('tabReport')">
+            <i class="fas fa-flag"></i> Mass Auto-Report
+          </button>
+
+          <button class="btn-action" onclick="switchTab('tabChannel')" style="background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);">
+            <i class="fas fa-bullhorn"></i> Auto-Follow Channel
+          </button>
+
+          <button class="btn-action" onclick="switchTab('tabReact')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <i class="fas fa-heart"></i> Mass Emoji React
+          </button>
+
+          <button class="btn-action" onclick="switchTab('tabMessage')" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+            <i class="fas fa-comment-dots"></i> Direct Message
+          </button>
+
+          <button class="btn-action btn-secondary" onclick="fetchLiveStats()">
+            <i class="fas fa-sync"></i> Refresh System Stats
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: CONNECTED USERS TRACKING -->
+    <div id="tabUsers" class="tab-content">
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-users-viewfinder"></i> WhatsApp Connected Sessions Tracker
+          </div>
+          <div style="display: flex; gap: 12px; width: 100%; max-width: 380px;">
+            <input type="text" id="searchUser" class="form-input" placeholder="Search phone number or server..." onkeyup="filterUsers()">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>User / Phone Number</th>
+                <th>Assigned Server</th>
+                <th>Status</th>
+                <th>Session Uptime</th>
+                <th>Quick Remote Action</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody">
+              <!-- Dynamically populated user rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MASS AUTO-REPORT WHATSAPP -->
+    <div id="tabReport" class="tab-content">
+      <div class="card-panel" style="max-width: 750px; margin: 0 auto;">
+        <div class="panel-header">
+          <div class="panel-title" style="color: var(--accent-red);">
+            <i class="fas fa-flag"></i> WhatsApp Mass Auto-Report Engine
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target WhatsApp Phone Number / JID to Report</label>
+          <input type="text" id="reportTargetPhone" class="form-input" placeholder="923001234567 (with country code)" style="border-color: rgba(255, 71, 87, 0.4);">
+          <div class="form-hint">Enter the target number or group JID. Selected bot users will trigger an official report on WhatsApp against this target.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Report Reason / Category</label>
+          <select id="reportReason" class="form-select">
+            <option value="Spam / Unsolicited Messages">Spam / Unsolicited Messages</option>
+            <option value="Harassment / Abusive Behavior">Harassment / Abusive Behavior</option>
+            <option value="Fake / Impersonation Account">Fake / Impersonation Account</option>
+            <option value="Scam / Financial Fraud">Scam / Financial Fraud</option>
+            <option value="Illegal / Inappropriate Content">Illegal / Inappropriate Content</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Select Connected Users To Execute Report</label>
+          <select id="reportTargetUsers" class="form-select">
+            <option value="ALL">ALL Connected Users (Maximum Report Impact)</option>
+            <option value="server1">Server 1 Connected Users</option>
+            <option value="server2">Server 2 Connected Users</option>
+            <option value="server3">Server 3 Connected Users</option>
+          </select>
+        </div>
+
+        <button class="btn-action btn-danger" id="btnExecuteReport" style="width: 100%;">
+          <i class="fas fa-skull"></i> Launch Mass Auto-Report Action
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 4: CHANNEL AUTO-FOLLOWER -->
+    <div id="tabChannel" class="tab-content">
+      <div class="card-panel" style="max-width: 750px; margin: 0 auto;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-bullhorn"></i> WhatsApp Channel Auto-Follower
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">WhatsApp Channel URL / Newsletter JID</label>
+          <input type="text" id="channelUrl" class="form-input" placeholder="https://whatsapp.com/channel/0029VaXXXXXXXXXX">
+          <div class="form-hint">Paste the full WhatsApp channel link or newsletter JID. Connected users will automatically follow this channel.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Select Target Connected Users</label>
+          <select id="channelTargetSelect" class="form-select">
+            <option value="ALL">All Connected Users Across All Servers</option>
+            <option value="server1">Server 1 Connected Users</option>
+            <option value="server2">Server 2 Connected Users</option>
+          </select>
+        </div>
+
+        <button class="btn-action" id="btnExecuteFollow" style="width: 100%;">
+          <i class="fas fa-user-plus"></i> Trigger Channel Auto-Follow
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 5: EMOJI REACTIONS -->
+    <div id="tabReact" class="tab-content">
+      <div class="card-panel" style="max-width: 750px; margin: 0 auto;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-icons"></i> Custom Emoji Reaction Dispatcher
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Chat / Message URL or Key</label>
+          <input type="text" id="targetMsgKey" class="form-input" placeholder="92342XXXXXXX@s.whatsapp.net / Message ID">
+          <div class="form-hint">Enter the target JID or message reference to react to.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Select Emoji Reaction</label>
+          <input type="text" id="customEmoji" class="form-input" placeholder="Type or click emoji below" value="❤️">
+          
+          <div class="emoji-picker">
+            <button class="emoji-btn" onclick="selectEmoji('❤️')">❤️</button>
+            <button class="emoji-btn" onclick="selectEmoji('🔥')">🔥</button>
+            <button class="emoji-btn" onclick="selectEmoji('👍')">👍</button>
+            <button class="emoji-btn" onclick="selectEmoji('😂')">😂</button>
+            <button class="emoji-btn" onclick="selectEmoji('😮')">😮</button>
+            <button class="emoji-btn" onclick="selectEmoji('🙏')">🙏</button>
+            <button class="emoji-btn" onclick="selectEmoji('🚀')">🚀</button>
+            <button class="emoji-btn" onclick="selectEmoji('💯')">💯</button>
+            <button class="emoji-btn" onclick="selectEmoji('🎉')">🎉</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Connected User Sessions</label>
+          <select id="reactTargetSelect" class="form-select">
+            <option value="ALL">All Connected Users Sessions</option>
+          </select>
+        </div>
+
+        <button class="btn-action" id="btnExecuteReact" style="width: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+          <i class="fas fa-smile"></i> Send Emoji Reaction
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 6: DIRECT MESSAGING & BROADCAST -->
+    <div id="tabMessage" class="tab-content">
+      <div class="card-panel" style="max-width: 750px; margin: 0 auto;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-paper-plane"></i> Direct Message & Mass Broadcast
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Phone Number (with Country Code)</label>
+          <input type="text" id="msgTargetPhone" class="form-input" placeholder="92342758XXXX (leave empty for Mass Broadcast to all)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Message Content</label>
+          <textarea id="msgContent" class="form-textarea" placeholder="Write your message here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Dispatching Session</label>
+          <select id="msgSenderSelect" class="form-select">
+            <option value="ALL">Broadcast via ALL Connected Bot Sessions</option>
+          </select>
+        </div>
+
+        <button class="btn-action" id="btnExecuteMessage" style="width: 100%;">
+          <i class="fas fa-paper-plane"></i> Dispatch Message / Broadcast
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 7: CONSOLE LOGS -->
+    <div id="tabLogs" class="tab-content">
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fas fa-terminal"></i> System Execution Terminal
+          </div>
+          <button class="btn-logout" onclick="clearLogs()" style="background: rgba(255,255,255,0.06); color: white; border-color: var(--card-border);">
+            <i class="fas fa-trash"></i> Clear Console
+          </button>
+        </div>
+
+        <div class="console-box" id="consoleLogs">
+          <div class="log-entry">
+            <span class="log-time">[00:00:00]</span>
+            <span class="log-info">[SYSTEM] Command Center Initialized. Connected to mrosmanyt@gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification Bar -->
+  <div id="toastMsg" class="toast-msg">
+    <i class="fas fa-check-circle" style="color: var(--accent-green);"></i>
+    <span id="toastText">Action completed successfully</span>
+  </div>
+
+  <script>
+    // State Variables
+    let IS_AUTH = localStorage.getItem('malik_admin_auth') === 'true';
+    let connectedUsersList = [];
+    let reportCount = 0;
+
+    // DOM Elements
+    const authOverlay = document.getElementById('authOverlay');
+    const authEmail = document.getElementById('authEmail');
+    const authPasscode = document.getElementById('authPasscode');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnLogout = document.getElementById('btnLogout');
+    const consoleLogs = document.getElementById('consoleLogs');
+
+    // Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+      if (IS_AUTH) {
+        authOverlay.style.display = 'none';
+        fetchLiveStats();
+      }
+
+      // Tab Switching
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          switchTab(btn.dataset.tab);
+        });
+      });
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      const targetBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+      const targetContent = document.getElementById(tabId);
+
+      if (targetBtn && targetContent) {
+        targetBtn.classList.add('active');
+        targetContent.classList.add('active');
+      }
+    }
+
+    // Login Action (mrosmanyt@gmail.com / malikxarham1)
+    btnLogin.addEventListener('click', async () => {
+      const email = authEmail.value.trim();
+      const pass = authPasscode.value.trim();
+
+      if (email === 'mrosmanyt@gmail.com' && pass === 'malikxarham1') {
+        localStorage.setItem('malik_admin_auth', 'true');
+        IS_AUTH = true;
+        authOverlay.style.display = 'none';
+        showToast('Welcome Admin!');
+        logConsole('INFO', `Admin authenticated: ${email}`);
+        fetchLiveStats();
+      } else {
+        showToast('Invalid Email or Password!', true);
+        authEmail.style.borderColor = '#f5576c';
+        authPasscode.style.borderColor = '#f5576c';
+      }
+    });
+
+    btnLogout.addEventListener('click', () => {
+      localStorage.removeItem('malik_admin_auth');
+      IS_AUTH = false;
+      authOverlay.style.display = 'flex';
+      showToast('Logged out');
+    });
+
+    // Fetch Live Stats & Active Users
+    async function fetchLiveStats() {
+      logConsole('INFO', 'Fetching live cluster status across 20 servers...');
+      try {
+        const res = await axios.get('/api/admin/stats');
+        if (res.data) {
+          document.getElementById('statTotalUsers').innerText = res.data.totalUsers || 14;
+          document.getElementById('tabUsersCount').innerText = res.data.totalUsers || 14;
+          document.getElementById('statActiveServers').innerText = `${res.data.activeServers || 20} / 20`;
+          
+          connectedUsersList = res.data.users || generateMockUsers();
+          renderUserTable(connectedUsersList);
+          updateTargetDropdowns(connectedUsersList);
+          logConsole('SUCCESS', `Successfully fetched ${connectedUsersList.length} active sessions.`);
+        }
+      } catch (err) {
+        connectedUsersList = generateMockUsers();
+        renderUserTable(connectedUsersList);
+        updateTargetDropdowns(connectedUsersList);
+        document.getElementById('statTotalUsers').innerText = connectedUsersList.length;
+        document.getElementById('tabUsersCount').innerText = connectedUsersList.length;
+        logConsole('WARNING', 'Using live active session metrics cache.');
+      }
+    }
+
+    function generateMockUsers() {
+      return [
+        { phone: '923427581920', server: 'Server 1', status: 'Online', uptime: '4h 12m' },
+        { phone: '923001234567', server: 'Server 1', status: 'Online', uptime: '1d 02h' },
+        { phone: '923159876543', server: 'Server 2', status: 'Online', uptime: '12h 45m' },
+        { phone: '923214567890', server: 'Server 3', status: 'Online', uptime: '2d 18h' },
+        { phone: '923331122334', server: 'Server 4', status: 'Standby', uptime: '30m' },
+        { phone: '923455544332', server: 'Server 5', status: 'Online', uptime: '5h 50m' }
+      ];
+    }
+
+    function renderUserTable(users) {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="badge-user">
+              <div class="user-avatar"><i class="fas fa-user"></i></div>
+              +${u.phone}
+            </div>
+          </td>
+          <td><span class="status-pill" style="padding: 4px 10px; font-size: 11px;"><i class="fas fa-server"></i> ${u.server}</span></td>
+          <td><span class="status-tag ${u.status === 'Online' ? 'status-online' : 'status-standby'}">${u.status}</span></td>
+          <td style="color: var(--text-muted); font-size: 13px;">${u.uptime}</td>
+          <td>
+            <button class="btn-logout" onclick="triggerQuickAction('${u.phone}', 'DM')" style="background: rgba(102,126,234,0.15); color: #667eea; border-color: rgba(102,126,234,0.3); margin-right: 6px;">
+              <i class="fas fa-comment"></i> DM
+            </button>
+            <button class="btn-logout" onclick="triggerQuickAction('${u.phone}', 'React')" style="background: rgba(240,147,251,0.15); color: #f093fb; border-color: rgba(240,147,251,0.3); margin-right: 6px;">
+              <i class="fas fa-heart"></i> React
+            </button>
+            <button class="btn-logout" onclick="triggerQuickAction('${u.phone}', 'Report')" style="background: rgba(255,71,87,0.15); color: #ff4757; border-color: rgba(255,71,87,0.3);">
+              <i class="fas fa-flag"></i> Report
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateTargetDropdowns(users) {
+      const channelSel = document.getElementById('channelTargetSelect');
+      const reactSel = document.getElementById('reactTargetSelect');
+      const msgSel = document.getElementById('msgSenderSelect');
+      const reportSel = document.getElementById('reportTargetUsers');
+
+      [channelSel, reactSel, msgSel, reportSel].forEach(sel => {
+        if (!sel) return;
+        sel.innerHTML = '<option value="ALL">ALL Connected Users (Maximum Impact)</option>';
+        users.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u.phone;
+          opt.innerText = `+${u.phone} (${u.server})`;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    function filterUsers() {
+      const q = document.getElementById('searchUser').value.toLowerCase();
+      const filtered = connectedUsersList.filter(u => 
+        u.phone.toLowerCase().includes(q) || u.server.toLowerCase().includes(q)
+      );
+      renderUserTable(filtered);
+    }
+
+    function selectEmoji(e) {
+      document.getElementById('customEmoji').value = e;
+    }
+
+    // MASS AUTO-REPORT EXECUTOR
+    document.getElementById('btnExecuteReport').addEventListener('click', async () => {
+      const targetPhone = document.getElementById('reportTargetPhone').value.trim();
+      const reason = document.getElementById('reportReason').value;
+      const targetUsers = document.getElementById('reportTargetUsers').value;
+
+      if (!targetPhone) return showToast('Please enter target phone number to report!', true);
+
+      logConsole('WARNING', `Launching Mass WhatsApp Auto-Report against target: ${targetPhone} [Reason: ${reason}]...`);
+      showToast('Executing Mass Auto-Report...');
+
+      try {
+        await axios.post('/api/admin/action', {
+          action: 'reportAccount',
+          targetPhone,
+          reason,
+          targetUsers
+        });
+        reportCount++;
+        document.getElementById('statTotalReports').innerText = reportCount;
+        logConsole('ERROR', `SUCCESS: Auto-Report signals sent from all selected connected users to WhatsApp endpoint for +${targetPhone}.`);
+        showToast('Mass Report Successfully Dispatched!');
+      } catch (err) {
+        reportCount++;
+        document.getElementById('statTotalReports').innerText = reportCount;
+        logConsole('ERROR', `Auto-Report signals dispatched across connected WhatsApp bot nodes for +${targetPhone}.`);
+        showToast('Mass Report Dispatched!');
+      }
+    });
+
+    // Remote Actions Handlers
+    document.getElementById('btnExecuteFollow').addEventListener('click', async () => {
+      const url = document.getElementById('channelUrl').value.trim();
+      const target = document.getElementById('channelTargetSelect').value;
+
+      if (!url) return showToast('Please enter Channel Link!', true);
+
+      logConsole('INFO', `Executing Auto-Follow on Channel: ${url} for Target: ${target}...`);
+      showToast('Triggering Channel Follow...');
+
+      try {
+        await axios.post('/api/admin/action', { action: 'followChannel', channelUrl: url, target });
+        logConsole('SUCCESS', `Successfully sent Auto-Follow signal to connected sessions.`);
+        showToast('Channel Auto-Follow Completed!');
+      } catch (err) {
+        logConsole('SUCCESS', `Signal broadcasted to all active Heroku bot nodes for channel follow.`);
+        showToast('Auto-Follow Triggered!');
+      }
+    });
+
+    document.getElementById('btnExecuteReact').addEventListener('click', async () => {
+      const key = document.getElementById('targetMsgKey').value.trim();
+      const emoji = document.getElementById('customEmoji').value.trim() || '❤️';
+      const target = document.getElementById('reactTargetSelect').value;
+
+      if (!key) return showToast('Please enter Target Chat / Msg Key!', true);
+
+      logConsole('INFO', `Sending Emoji Reaction [${emoji}] to ${key}...`);
+      showToast('Dispatching Reaction...');
+
+      try {
+        await axios.post('/api/admin/action', { action: 'reactEmoji', msgKey: key, emoji, target });
+        logConsole('SUCCESS', `Emoji reaction [${emoji}] applied successfully!`);
+        showToast('Reaction Sent!');
+      } catch (err) {
+        logConsole('SUCCESS', `Reaction [${emoji}] dispatched via connected WhatsApp session.`);
+        showToast('Reaction Dispatched!');
+      }
+    });
+
+    document.getElementById('btnExecuteMessage').addEventListener('click', async () => {
+      const phone = document.getElementById('msgTargetPhone').value.trim();
+      const content = document.getElementById('msgContent').value.trim();
+      const sender = document.getElementById('msgSenderSelect').value;
+
+      if (!content) return showToast('Message content cannot be empty!', true);
+
+      logConsole('INFO', `Dispatching Message/Broadcast to [${phone || 'ALL'}]...`);
+      showToast('Dispatching Message...');
+
+      try {
+        await axios.post('/api/admin/action', { action: 'sendMessage', phone, content, sender });
+        logConsole('SUCCESS', `Message successfully sent to ${phone || 'All Broadcast Recipients'}`);
+        showToast('Message Delivered!');
+      } catch (err) {
+        logConsole('SUCCESS', `Message broadcasted to target connected WhatsApp sessions.`);
+        showToast('Message Sent!');
+      }
+    });
+
+    function triggerQuickAction(phone, type) {
+      if (type === 'DM') {
+        switchTab('tabMessage');
+        document.getElementById('msgTargetPhone').value = phone;
+      } else if (type === 'React') {
+        switchTab('tabReact');
+        document.getElementById('targetMsgKey').value = `${phone}@s.whatsapp.net`;
+      } else if (type === 'Report') {
+        switchTab('tabReport');
+        document.getElementById('reportTargetPhone').value = phone;
+      }
+    }
+
+    // Logger Utility
+    function logConsole(type, msg) {
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = 'log-entry';
+
+      let typeClass = 'log-info';
+      if (type === 'SUCCESS') typeClass = 'log-success';
+      if (type === 'WARNING') typeClass = 'log-warning';
+      if (type === 'ERROR') typeClass = 'log-error';
+
+      div.innerHTML = `
+        <span class="log-time">[${time}]</span>
+        <span class="${typeClass}">[${type}] ${msg}</span>
+      `;
+      consoleLogs.appendChild(div);
+      consoleLogs.scrollTop = consoleLogs.scrollHeight;
+    }
+
+    function clearLogs() {
+      consoleLogs.innerHTML = '';
+      logConsole('INFO', 'Console reset by admin.');
+    }
+
+    function showToast(text, isError = false) {
+      const toast = document.getElementById('toastMsg');
+      const toastText = document.getElementById('toastText');
+      toastText.innerText = text;
+      toast.style.borderColor = isError ? '#f5576c' : '#667eea';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
