@@ -9,7 +9,7 @@ import { Sticker, StickerTypes } from "wa-sticker-formatter";
 const __filename = fileURLToPath(import.meta.url);
 
 // Telegram Bot Token
-const BOT_TOKEN = '8717187428:AAHo9IgdtcQztOT572ixLJNSliFSulA_30M';
+const BOT_TOKEN = '8651022549:AAHjyfWk72oqCpesgjJ30rqTk8iOkGWSz0o';
 
 cmd({
     pattern: "tsticker",

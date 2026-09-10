@@ -217,7 +217,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-        const apiUrl = `https://jawad-tech.vercel.app/downloader?url=${encodeURIComponent(fbUrl)}`;
+        const apiUrl = `https://api.deline.web.id/downloader/facebook?url=${encodeURIComponent(fbUrl)}`;
         const response = await axios.get(apiUrl);
         const data = response.data;
 
@@ -309,7 +309,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-        const apiUrl = `https://jawad-tech.vercel.app/downloader?url=${encodeURIComponent(igUrl)}`;
+        const apiUrl = `https://api.deline.web.id/downloader/facebook?url=${encodeURIComponent(igUrl)}`;
         const response = await axios.get(apiUrl);
         const data = response.data;
 
@@ -359,7 +359,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-        const apiUrl = `https://jawad-tech.vercel.app/igdl?url=${encodeURIComponent(url)}`;
+        const apiUrl = `https://api-aswin-sparky.koyeb.app/api/downloader/igdl?url=${encodeURIComponent(url)}`;
         const response = await axios.get(apiUrl);
 
         if (!response.data?.status || !response.data.result?.length) {
@@ -679,7 +679,7 @@ cmd({
         let videoUrl, title, author, username;
 
         try {
-            const api1 = `https://jawad-tech.vercel.app/download/tiktok?url=${encodeURIComponent(q)}`;
+            const api1 = `https://api.deline.web.id/downloader/tiktok?url=${encodeURIComponent(q)}`;
             const res1 = await axios.get(api1);
             const data1 = res1.data;
 
@@ -693,7 +693,7 @@ cmd({
             }
         } catch (api1Error) {
             try {
-                const api2 = `https://jawad-tech.vercel.app/download/ttdl?url=${encodeURIComponent(q)}`;
+                const api2 = `https://api.deline.web.id/downloader/tiktok?url=${encodeURIComponent(q)}`;
                 const res2 = await axios.get(api2);
                 const data2 = res2.data;
 
@@ -743,7 +743,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-        const api = `https://jawad-tech.vercel.app/download/tiktok?url=${encodeURIComponent(q)}`;
+        const api = `https://api.deline.web.id/downloader/tiktok?url=${encodeURIComponent(q)}`;
         const res = await axios.get(api);
         const json = res.data;
 
@@ -782,7 +782,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-        const api = `https://jawad-tech.vercel.app/download/ttdl?url=${encodeURIComponent(q)}`;
+        const api = `https://api.deline.web.id/downloader/tiktok?url=${encodeURIComponent(q)}`;
         const res = await axios.get(api);
         const json = res.data;
 
@@ -870,11 +870,11 @@ cmd({
 const platforms = {
     youtube: {
         pattern: /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w\-_]{11})/i,
-        api: "https://jawad-tech.vercel.app/download/ytdl",
+        api: "https://api.deline.web.id/downloader/ytmp4?url=",
     },
     facebook: {
         pattern: /(?:https?:\/\/)?(?:www\.)?(facebook\.com|fb\.watch)\/[^\s]+/i,
-        api: "https://jawad-tech.vercel.app/downloader",
+        api: "https://api.deline.web.id/downloader/facebook",
     },
     instagram: {
         pattern: /(?:https?:\/\/)?(?:www\.)?(instagram\.com|instagr\.am)\/[^\s]+/i,
@@ -882,7 +882,7 @@ const platforms = {
     },
     pinterest: {
         pattern: /(?:https?:\/\/)?(?:www\.)?(pinterest\.com|pin\.it)\/[^\s]+/i,
-        api: "https://jawad-tech.vercel.app/download/pinterest",
+        api: "https://api.deline.web.id/search/pinterest?q=",
     }
 };
 
@@ -976,7 +976,7 @@ async function downloadInstagram(conn, from, url, message, DESCRIPTION) {
 }
 
 async function downloadYouTube(conn, from, url, message, DESCRIPTION) {
-    const apiUrl = `https://jawad-tech.vercel.app/download/ytdl?url=${encodeURIComponent(url)}`;
+    const apiUrl = `https://api.deline.web.id/downloader/ytmp4?url=${encodeURIComponent(url)}`;
     const response = await axios.get(apiUrl);
 
     if (!response.data?.status || !response.data.result?.mp4) {
@@ -990,7 +990,7 @@ async function downloadYouTube(conn, from, url, message, DESCRIPTION) {
 }
 
 async function downloadFacebook(conn, from, url, message, DESCRIPTION) {
-    const apiUrl = `https://jawad-tech.vercel.app/downloader?url=${encodeURIComponent(url)}`;
+    const apiUrl = `https://api.deline.web.id/downloader/facebook?url=${encodeURIComponent(url)}`;
     const response = await axios.get(apiUrl);
 
     if (!response.data?.status || !response.data.result?.length) {
@@ -1009,7 +1009,7 @@ async function downloadFacebook(conn, from, url, message, DESCRIPTION) {
 }
 
 async function downloadPinterest(conn, from, url, message, DESCRIPTION) {
-    const apiUrl = `https://jawad-tech.vercel.app/download/pinterest?url=${encodeURIComponent(url)}`;
+    const apiUrl = `https://api.deline.web.id/search/pinterest?q=${encodeURIComponent(url)}`;
     const response = await axios.get(apiUrl);
 
     if (!response.data?.status || !response.data.result?.url) {
