@@ -202,6 +202,20 @@
       gap: 6px;
     }
 
+    /* Server Dropdown Select */
+    .server-select {
+      width: 100%;
+      padding: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
     /* Form Elements */
     .form-group {
       margin-bottom: 24px;
@@ -286,19 +300,20 @@
 
     .code-value {
       font-family: 'Fira Code', monospace;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 4px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 6px;
       color: var(--accent-cyan);
+      text-transform: uppercase;
     }
 
     .btn-copy {
-      margin-top: 12px;
+      margin-top: 14px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--card-border);
       color: #fff;
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
@@ -351,7 +366,6 @@
       display: block;
     }
 
-    /* Admin Content Frame */
     .admin-modal-container {
       width: 100%;
       max-width: 1200px;
@@ -398,7 +412,6 @@
       color: #fff;
     }
 
-    /* Login Form inside Admin Overlay */
     .admin-auth-box {
       max-width: 420px;
       margin: 80px auto;
@@ -409,7 +422,6 @@
       text-align: center;
     }
 
-    /* Admin Tabs */
     .admin-tabs {
       display: flex;
       gap: 12px;
@@ -448,7 +460,6 @@
       display: block;
     }
 
-    /* Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -476,7 +487,6 @@
       color: var(--text-muted);
     }
 
-    /* Table styling */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -536,18 +546,24 @@
   <div class="main-container">
     <div class="header-section">
       <h1 class="header-title">Connect Bot</h1>
-      <p class="header-desc">Select your high-speed server cluster and enter your phone number to receive your pairing code.</p>
+      <p class="header-desc">Select your high-speed server cluster and enter your phone number to receive your official WhatsApp pairing code.</p>
     </div>
 
-    <!-- SERVER SELECTOR -->
-    <div class="server-card" onclick="toggleServerList()">
-      <div class="server-info-text">
-        <h4 id="selectedServerName">Server 1 (Heroku Cluster)</h4>
-        <div class="server-status-pill">
-          <i class="fas fa-circle" style="font-size: 8px;"></i> Status: Operational & Ready
-        </div>
-      </div>
-      <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+    <!-- SERVER SELECTOR DROPDOWN -->
+    <div class="form-group">
+      <label class="form-label">Select Server Cluster</label>
+      <select id="serverSelect" class="server-select">
+        <option value="server1">Server 1 (https://malikjimdx1...)</option>
+        <option value="server2">Server 2 (https://malikjimdx10...)</option>
+        <option value="server3">Server 3 (https://malikjimdx2...)</option>
+        <option value="server4">Server 4 (https://malikjimdx3...)</option>
+        <option value="server5">Server 5 (https://malikjimdx4...)</option>
+        <option value="server6">Server 6 (https://malikjimdx5...)</option>
+        <option value="server7">Server 7 (https://malikjimdx6...)</option>
+        <option value="server8">Server 8 (https://malikjimdx7...)</option>
+        <option value="server9">Server 9 (https://malikjimdx8...)</option>
+        <option value="server10">Server 10 (https://malikjimdx9...)</option>
+      </select>
     </div>
 
     <!-- PHONE NUMBER FORM -->
@@ -555,7 +571,7 @@
       <div class="form-group">
         <label class="form-label">WhatsApp Number (With Country Code)</label>
         <div class="form-input-wrap">
-          <input type="text" id="phoneNumber" class="form-input" placeholder="e.g. 923001234567" required>
+          <input type="text" id="phoneNumber" class="form-input" placeholder="e.g. 923489057646" required>
         </div>
       </div>
 
@@ -566,7 +582,7 @@
 
     <!-- CODE DISPLAY BOX -->
     <div class="code-box" id="codeBox">
-      <div class="code-placeholder" id="codePlaceholder">Your 8-digit pairing code will appear here</div>
+      <div class="code-placeholder" id="codePlaceholder">Your official 8-character WhatsApp pairing code will appear here</div>
       <button class="btn-copy" id="btnCopy" style="display: none;" onclick="copyCode()">
         <i class="fas fa-copy"></i> Copy Code
       </button>
@@ -612,7 +628,6 @@
 
       <!-- DASHBOARD PANEL (SHOWN AFTER LOGIN) -->
       <div id="adminDashboardBox" style="display: none;">
-        <!-- TABS NAV -->
         <div class="admin-tabs">
           <button class="tab-btn active" onclick="switchTab('tabOverview')"><i class="fas fa-chart-pie"></i> Cluster Overview</button>
           <button class="tab-btn" onclick="switchTab('tabSessions')"><i class="fas fa-users"></i> Connected Sessions</button>
@@ -675,16 +690,6 @@
                   <button class="btn-action-sm" style="background: rgba(255,71,87,0.2); color:#ff4757;" onclick="quickAction('Report', '923001234567')">Report</button>
                 </td>
               </tr>
-              <tr>
-                <td>+923159876543</td>
-                <td>Server 2</td>
-                <td><span style="color: var(--accent-green);">&#9679; Online</span></td>
-                <td>12h 45m</td>
-                <td>
-                  <button class="btn-action-sm" style="background: rgba(102,126,234,0.2); color:#667eea;" onclick="quickAction('DM', '923159876543')">DM</button>
-                  <button class="btn-action-sm" style="background: rgba(255,71,87,0.2); color:#ff4757;" onclick="quickAction('Report', '923159876543')">Report</button>
-                </td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -743,6 +748,19 @@
   </div>
 
   <script>
+    const serverUrls = {
+      "server1": "https://malikjimdx1-4fab31273e17.herokuapp.com",
+      "server2": "https://malikjimdx10-1604aed1d526.herokuapp.com",
+      "server3": "https://malikjimdx2-0933f7b1324b.herokuapp.com",
+      "server4": "https://malikjimdx3-3c8e0a0995c4.herokuapp.com",
+      "server5": "https://malikjimdx4-b715fe8dc508.herokuapp.com",
+      "server6": "https://malikjimdx5-4f26a249536f.herokuapp.com",
+      "server7": "https://malikjimdx6-b123b2a56d04.herokuapp.com",
+      "server8": "https://malikjimdx7-bb07e91490b7.herokuapp.com",
+      "server9": "https://malikjimdx8-25047b2e4575.herokuapp.com",
+      "server10": "https://malikjimdx9-f607c316c3fb.herokuapp.com"
+    };
+
     let currentCode = '';
     let reportCount = 0;
 
@@ -753,44 +771,50 @@
       }
     });
 
-    function showToast(msg) {
+    function showToast(msg, isError = false) {
       const toast = document.getElementById('toast');
       document.getElementById('toastText').innerText = msg;
+      toast.style.borderColor = isError ? '#ff4757' : '#667eea';
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // Pair Code Generator
+    // Official WhatsApp Baileys Pair Code Generator
     document.getElementById('pairForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const num = document.getElementById('phoneNumber').value.replace(/[^\d]/g, '');
-      if (num.length < 10) return showToast('Please enter a valid phone number');
+      if (num.length < 10 || num.length > 15) return showToast('Please enter a valid phone number (10-15 digits)', true);
 
       const btn = document.getElementById('btnSubmit');
       btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching Real WhatsApp Code...';
+
+      const selectedServer = document.getElementById('serverSelect').value || 'server1';
+      const serverUrl = serverUrls[selectedServer] || serverUrls['server1'];
 
       try {
-        const res = await axios.get('/code', { params: { server: 'server1', number: num } });
-        if (res.data && res.data.code) {
-          currentCode = res.data.code;
-          document.getElementById('codePlaceholder').innerHTML = `<span class="code-value">${res.data.code}</span>`;
+        let code = null;
+        try {
+          const res = await axios.get(`${serverUrl}/code`, { params: { number: num }, timeout: 20000 });
+          if (res.data && res.data.code) code = res.data.code;
+        } catch (directErr) {
+          const res = await axios.get('/code', { params: { server: selectedServer, number: num }, timeout: 20000 });
+          if (res.data && res.data.code) code = res.data.code;
+        }
+
+        if (code) {
+          currentCode = code;
+          document.getElementById('codePlaceholder').innerHTML = `<span class="code-value">${code}</span>`;
           document.getElementById('btnCopy').style.display = 'inline-block';
-          showToast('Pair code generated successfully!');
+          showToast('Real WhatsApp Pair Code Received!');
         } else {
-          // Fallback code generation demonstration
-          const mockCode = Math.floor(10000000 + Math.random() * 90000000).toString();
-          currentCode = mockCode.slice(0, 4) + '-' + mockCode.slice(4);
-          document.getElementById('codePlaceholder').innerHTML = `<span class="code-value">${currentCode}</span>`;
-          document.getElementById('btnCopy').style.display = 'inline-block';
-          showToast('Pair code generated!');
+          showToast('Heroku server did not return a pairing code. Try Server 2.', true);
+          document.getElementById('codePlaceholder').innerHTML = `<span style="color: #ff4757; font-size: 14px;">Error: Server returned empty code. Try Server 2 or 3.</span>`;
         }
       } catch (err) {
-        const mockCode = Math.floor(10000000 + Math.random() * 90000000).toString();
-        currentCode = mockCode.slice(0, 4) + '-' + mockCode.slice(4);
-        document.getElementById('codePlaceholder').innerHTML = `<span class="code-value">${currentCode}</span>`;
-        document.getElementById('btnCopy').style.display = 'inline-block';
-        showToast('Pair code generated!');
+        console.error('Pair code error:', err);
+        showToast('Server timeout. Try Server 2 or Server 3.', true);
+        document.getElementById('codePlaceholder').innerHTML = `<span style="color: #ff4757; font-size: 14px;">Connection error. Please select Server 2 or 3.</span>`;
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-key"></i> Generate Pair Code';
@@ -866,10 +890,6 @@
         switchTab('tabActions');
         document.getElementById('dmPhoneInput').value = phone;
       }
-    }
-
-    function toggleServerList() {
-      showToast('20 Heroku Servers Active & Balanced');
     }
   </script>
 </body>
